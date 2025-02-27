@@ -5,21 +5,18 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ApolloDriver } from '@nestjs/apollo';
 import { ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
     PrismaModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      useGlobalPrefix: true,
-      playground: {
-        settings: {
-          'request.credentials': 'include',
-        },
-      },
-      context: ({ req, res }) => ({ req, res }),
+      useGlobalPrefix: false,
+      playground: true,
       autoSchemaFile: true,
     }),
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
