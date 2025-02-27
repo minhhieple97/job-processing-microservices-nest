@@ -38,7 +38,8 @@
     "test": {
       "options": {
         "passWithNoTests": true
-      }
+      },
+      "dependsOn": ["generate-prisma"]
     },
     "generate-prisma": {
       "command": "prisma generate",
