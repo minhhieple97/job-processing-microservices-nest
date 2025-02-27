@@ -5,4 +5,10 @@ import { AbstractModel } from '@jobber/nestjs';
 export class User extends AbstractModel {
   @Field()
   email: string;
+
+  @Field({ nullable: true })
+  createdAt?: Date;
+
+  @Field({ nullable: true })
+  updatedAt?: Date;
 }
