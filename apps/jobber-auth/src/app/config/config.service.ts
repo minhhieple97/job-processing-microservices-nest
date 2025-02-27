@@ -5,6 +5,10 @@ import { ConfigService as NestConfigService } from '@nestjs/config';
 export class ConfigService {
   constructor(private configService: NestConfigService) {}
 
+  get port(): number {
+    return this.configService.get<number>('PORT');
+  }
+
   get databaseUrl(): string {
     return this.configService.get<string>('AUTH_DATABASE_URL');
   }
