@@ -18,6 +18,16 @@
       },
       "dependsOn": ["generate-prisma"]
     },
+    "ci-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd apps/jobber-auth && npx prisma generate",
+          "webpack-cli build node-env=production"
+        ],
+        "parallel": false
+      }
+    },
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
@@ -36,10 +46,14 @@
       }
     },
     "test": {
+      "executor": "nx:run-commands",
       "options": {
-        "passWithNoTests": true
-      },
-      "dependsOn": ["generate-prisma"]
+        "commands": [
+          "cd apps/jobber-auth && npx prisma generate",
+          "jest --passWithNoTests=true --runInBand"
+        ],
+        "parallel": false
+      }
     },
     "generate-prisma": {
       "command": "prisma generate",
