@@ -15,7 +15,8 @@
         "development": {
           "args": ["node-env=development"]
         }
-      }
+      },
+      "dependsOn": ["generate-prisma"]
     },
     "serve": {
       "executor": "@nx/js:node",
@@ -37,6 +38,20 @@
     "test": {
       "options": {
         "passWithNoTests": true
+      }
+    },
+    "generate-prisma": {
+      "command": "prisma generate",
+      "options": {
+        "cwd": "{projectRoot}",
+        "input": ["prisma/schema.prisma"]
+      },
+      "cache": true
+    },
+    "migrate-prisma": {
+      "command": "prisma migrate dev",
+      "options": {
+        "cwd": "{projectRoot}"
       }
     }
   }
