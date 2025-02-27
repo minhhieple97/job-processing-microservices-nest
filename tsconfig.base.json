@@ -15,7 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@jobber/nestjs": ["libs/nestjs/src/index.ts"]
+      "@jobber/nestjs": ["libs/nestjs/src/index.ts"],
+      "@prisma-clients/*": ["node_modules/@prisma-clients/*"]
     }
   },
   "exclude": ["node_modules", "tmp"]

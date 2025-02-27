@@ -7,9 +7,11 @@ import { ApolloDriverConfig } from '@nestjs/apollo';
 import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './user/user.module';
 import { APP_PIPE } from '@nestjs/core';
+import { ConfigModule } from './config/config.module';
 
 @Module({
   imports: [
+    ConfigModule,
     PrismaModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
