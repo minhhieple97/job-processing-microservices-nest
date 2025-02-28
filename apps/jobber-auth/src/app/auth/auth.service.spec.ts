@@ -8,7 +8,6 @@ import * as bcrypt from 'bcrypt';
 import { User } from '../user/model/user.model';
 import { Response } from 'express';
 
-// Mock bcrypt
 jest.mock('bcrypt');
 
 describe('AuthService', () => {
@@ -33,7 +32,6 @@ describe('AuthService', () => {
   const mockRefreshToken = 'mock-refresh-token';
 
   beforeEach(async () => {
-    // Create mock services
     const mockUserService = {
       findByEmail: jest.fn(),
       findOne: jest.fn(),
@@ -66,7 +64,6 @@ describe('AuthService', () => {
     jwtService = module.get(JwtService) as jest.Mocked<JwtService>;
     configService = module.get(ConfigService) as jest.Mocked<ConfigService>;
 
-    // Default mock implementations
     (bcrypt.compare as jest.Mock).mockResolvedValue(true);
     jwtService.sign.mockImplementation((payload, options) => {
       return options ? mockRefreshToken : mockAccessToken;
@@ -127,14 +124,11 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should return user and tokens when login is successful', async () => {
-      // Arrange
       userService.findByEmail.mockResolvedValue(mockUser);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      // Act
       const result = await authService.login('test@example.com', 'password123');
 
-      // Assert
       expect(result).toEqual({
         user: mockUser,
         accessToken: mockAccessToken,
@@ -145,43 +139,34 @@ describe('AuthService', () => {
     });
 
     it('should set cookies when response object is provided', async () => {
-      // Arrange
       userService.findByEmail.mockResolvedValue(mockUser);
       const mockResponse = {
         cookie: jest.fn(),
       } as unknown as Response;
 
-      // Act
       await authService.login('test@example.com', 'password123', mockResponse);
 
-      // Assert
       expect(mockResponse.cookie).toHaveBeenCalledTimes(2);
     });
 
     it('should not set cookies when response object is not provided', async () => {
-      // Arrange
       userService.findByEmail.mockResolvedValue(mockUser);
       const mockResponse = {
         cookie: jest.fn(),
       } as unknown as Response;
 
-      // Act
       await authService.login('test@example.com', 'password123');
 
-      // Assert
       expect(mockResponse.cookie).not.toHaveBeenCalled();
     });
   });
 
   describe('refreshToken', () => {
     it('should return a new access token when refresh token is valid', async () => {
-      // Arrange
       userService.findOne.mockResolvedValue(mockUser);
 
-      // Act
       const result = await authService.refreshToken(mockRefreshToken);
 
-      // Assert
       expect(result).toEqual({
         accessToken: mockAccessToken,
       });
@@ -193,26 +178,21 @@ describe('AuthService', () => {
     });
 
     it('should set cookies when response object is provided', async () => {
-      // Arrange
       userService.findOne.mockResolvedValue(mockUser);
       const mockResponse = {
         cookie: jest.fn(),
       } as unknown as Response;
 
-      // Act
       await authService.refreshToken(mockRefreshToken, mockResponse);
 
-      // Assert
       expect(mockResponse.cookie).toHaveBeenCalledTimes(2);
     });
 
     it('should throw UnauthorizedException when refresh token is invalid', async () => {
-      // Arrange
       jwtService.verify.mockImplementation(() => {
         throw new Error('Invalid token');
       });
 
-      // Act & Assert
       await expect(authService.refreshToken('invalid-token')).rejects.toThrow(
         UnauthorizedException
       );
@@ -224,10 +204,8 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException when user is not found', async () => {
-      // Arrange
       userService.findOne.mockResolvedValue(null);
 
-      // Act & Assert
       await expect(authService.refreshToken(mockRefreshToken)).rejects.toThrow(
         UnauthorizedException
       );
@@ -239,10 +217,8 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('should return success when logout is called without response', async () => {
-      // Act
       const result = await authService.logout();
 
-      // Assert
       expect(result).toEqual({
         success: true,
         message: 'Logged out successfully',
@@ -250,15 +226,12 @@ describe('AuthService', () => {
     });
 
     it('should clear cookies when response object is provided', async () => {
-      // Arrange
       const mockResponse = {
         clearCookie: jest.fn(),
       } as unknown as Response;
 
-      // Act
       const result = await authService.logout(mockResponse);
 
-      // Assert
       expect(result).toEqual({
         success: true,
         message: 'Logged out successfully',

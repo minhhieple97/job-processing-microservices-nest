@@ -21,7 +21,6 @@ const mockPrismaService = {
 
 describe('UserService', () => {
   let service: UserService;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   let prismaService: PrismaService;
 
   beforeEach(async () => {

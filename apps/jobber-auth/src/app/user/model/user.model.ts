@@ -6,10 +6,8 @@ export class User extends AbstractModel {
   @Field()
   email: string;
 
-  // Password is not exposed in GraphQL responses
   password?: string;
 
-  // Salt is not exposed in GraphQL responses
   salt?: string;
 
   @Field({ nullable: true })
