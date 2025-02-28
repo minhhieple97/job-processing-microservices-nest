@@ -34,7 +34,6 @@ describe('AuthResolver', () => {
   };
 
   beforeEach(async () => {
-    // Create mock auth service
     const mockAuthService = {
       login: jest.fn(),
       refreshToken: jest.fn(),
@@ -51,7 +50,6 @@ describe('AuthResolver', () => {
     resolver = module.get<AuthResolver>(AuthResolver);
     authService = module.get(AuthService) as jest.Mocked<AuthService>;
 
-    // Default mock implementations
     authService.login.mockResolvedValue(mockAuthResult);
     authService.refreshToken.mockResolvedValue(mockRefreshTokenResult);
     authService.logout.mockResolvedValue(mockLogoutResult);
@@ -63,17 +61,14 @@ describe('AuthResolver', () => {
 
   describe('login', () => {
     it('should call authService.login with correct parameters', async () => {
-      // Arrange
       const loginInput = { email: 'test@example.com', password: 'password123' };
       const context: GqlContext = {
         req: {} as any,
         res: {} as any,
       };
 
-      // Act
       const result = await resolver.login(loginInput, context);
 
-      // Assert
       expect(result).toEqual(mockAuthResult);
       expect(authService.login).toHaveBeenCalledWith(
         loginInput.email,
@@ -85,17 +80,14 @@ describe('AuthResolver', () => {
 
   describe('refreshToken', () => {
     it('should call authService.refreshToken with token from input', async () => {
-      // Arrange
       const refreshTokenInput = { refreshToken: mockRefreshToken };
       const context: GqlContext = {
         req: { cookies: {} } as any,
         res: {} as any,
       };
 
-      // Act
       const result = await resolver.refreshToken(refreshTokenInput, context);
 
-      // Assert
       expect(result).toEqual(mockRefreshTokenResult);
       expect(authService.refreshToken).toHaveBeenCalledWith(
         mockRefreshToken,
@@ -104,7 +96,6 @@ describe('AuthResolver', () => {
     });
 
     it('should call authService.refreshToken with token from cookie', async () => {
-      // Arrange
       const context: GqlContext = {
         req: {
           cookies: {
@@ -114,10 +105,8 @@ describe('AuthResolver', () => {
         res: {} as any,
       };
 
-      // Act
       const result = await resolver.refreshToken(undefined, context);
 
-      // Assert
       expect(result).toEqual(mockRefreshTokenResult);
       expect(authService.refreshToken).toHaveBeenCalledWith(
         mockRefreshToken,
@@ -126,13 +115,11 @@ describe('AuthResolver', () => {
     });
 
     it('should throw error when no token is provided', async () => {
-      // Arrange
       const context: GqlContext = {
         req: { cookies: {} } as any,
         res: {} as any,
       };
 
-      // Act & Assert
       await expect(resolver.refreshToken(undefined, context)).rejects.toThrow(
         'Refresh token is required'
       );
@@ -140,7 +127,6 @@ describe('AuthResolver', () => {
     });
 
     it('should prioritize token from cookie over input', async () => {
-      // Arrange
       const cookieToken = 'cookie-token';
       const inputToken = 'input-token';
       const refreshTokenInput = { refreshToken: inputToken };
@@ -153,10 +139,8 @@ describe('AuthResolver', () => {
         res: {} as any,
       };
 
-      // Act
       await resolver.refreshToken(refreshTokenInput, context);
 
-      // Assert
       expect(authService.refreshToken).toHaveBeenCalledWith(
         cookieToken,
         context.res
@@ -166,16 +150,13 @@ describe('AuthResolver', () => {
 
   describe('logout', () => {
     it('should call authService.logout with response object', async () => {
-      // Arrange
       const context: GqlContext = {
         req: {} as any,
         res: {} as any,
       };
 
-      // Act
       const result = await resolver.logout(context);
 
-      // Assert
       expect(result).toEqual(mockLogoutResult);
       expect(authService.logout).toHaveBeenCalledWith(context.res);
     });

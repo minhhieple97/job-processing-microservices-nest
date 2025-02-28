@@ -6,7 +6,6 @@ import { BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { User } from './model/user.model';
 
-// Create a mock UserService
 const mockUserService = {
   findOne: jest.fn(),
   findAll: jest.fn(),
@@ -14,12 +13,10 @@ const mockUserService = {
   create: jest.fn(),
 };
 
-// Mock for GqlAuthGuard
 const mockGqlAuthGuard = {
   canActivate: jest.fn().mockImplementation(() => true),
 };
 
-// Create a mock user for testing
 const createMockUser = (overrides = {}): Partial<User> => ({
   id: '1',
   email: 'user@example.com',
@@ -50,7 +47,6 @@ describe('UserResolver', () => {
     resolver = module.get<UserResolver>(UserResolver);
     userService = module.get<UserService>(UserService);
 
-    // Clear all mocks before each test
     jest.clearAllMocks();
   });
 
@@ -123,8 +119,8 @@ describe('UserResolver', () => {
 
       const result = await resolver.me(mockUser as User);
 
-      expect(result).toBe(mockUser); // Check for reference equality
-      expect(result).toEqual(mockUser); // Check for value equality
+      expect(result).toBe(mockUser);
+      expect(result).toEqual(mockUser);
     });
 
     it('should handle user with minimal properties', async () => {
@@ -228,7 +224,6 @@ describe('UserResolver', () => {
     });
 
     it('should validate input before creating user', async () => {
-      // This test verifies that the resolver passes the exact input to the service
       const createUserInput: CreateUserInput = {
         email: 'test@example.com',
         password: 'securePassword123',
@@ -242,7 +237,6 @@ describe('UserResolver', () => {
 
       await resolver.createUser(createUserInput);
 
-      // Verify the exact input was passed to the service
       expect(mockUserService.create).toHaveBeenCalledWith(createUserInput);
       expect(mockUserService.create.mock.calls[0][0]).toBe(createUserInput);
     });
@@ -288,7 +282,6 @@ describe('UserResolver', () => {
     });
 
     it('should handle undefined user in me method', async () => {
-      // This is an edge case that shouldn't happen in production but tests robustness
       const result = await resolver.me(undefined as unknown as User);
 
       expect(result).toBeUndefined();
