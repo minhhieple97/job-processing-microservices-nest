@@ -36,4 +36,30 @@ export class ConfigService {
   get isProduction(): boolean {
     return this.nodeEnv === 'production';
   }
+
+  get jwtSecret(): string {
+    return this.configService.get<string>('JWT_SECRET');
+  }
+
+  get jwtExpiresIn(): string {
+    return this.configService.get<string>('JWT_EXPIRES_IN');
+  }
+
+  get jwtRefreshSecret(): string {
+    return this.configService.get<string>('JWT_REFRESH_SECRET');
+  }
+
+  get jwtRefreshExpiresIn(): string {
+    return this.configService.get<string>('JWT_REFRESH_EXPIRES_IN');
+  }
+
+  get cookieSecret(): string {
+    return this.configService.get<string>('COOKIE_SECRET') || this.jwtSecret;
+  }
+
+  get clientOrigin(): string {
+    return (
+      this.configService.get<string>('CLIENT_ORIGIN') || 'http://localhost:4200'
+    );
+  }
 }
