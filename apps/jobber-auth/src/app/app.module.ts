@@ -8,6 +8,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { UserModule } from './user/user.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from './config/config.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -18,8 +19,10 @@ import { ConfigModule } from './config/config.module';
       useGlobalPrefix: false,
       playground: true,
       autoSchemaFile: true,
+      context: ({ req, res }) => ({ req, res }),
     }),
     UserModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
