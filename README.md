@@ -4,6 +4,8 @@
 
 A distributed job processing system built with modern microservices architecture.
 
+> Please note that this project focuses on applying best practices, clean code and writing units in detail, CI/CD.
+
 ## System Architecture
 
 Jobber is a robust, scalable job processing platform built using a microservices architecture. The system consists of several specialized services that communicate through gRPC and GraphQL, orchestrated in a Kubernetes environment.
@@ -127,6 +129,27 @@ To build a service for production:
 ```sh
 npx nx build jobber-auth
 ```
+
+## Nx Usage Tips
+
+### Generating Components
+
+When using the `nx g` command (like `nx g <application, service, module>`), you need to specify the full path to the desired location:
+
+```sh
+# Use the --directory flag (relative to where you run the command)
+nx g <schematic> --directory=apps/<service_name>
+
+# Or use a fully specified path
+nx g <schematic> apps/<service_name>/<module_name>
+```
+
+Alternatively, if you're using VS Code with the Nx extension:
+
+- Right-click on a folder and choose "Nx Generate"
+- The code generation will run from that folder
+
+This helps avoid having to manually move generated files to the correct location.
 
 ## Project Structure
 
