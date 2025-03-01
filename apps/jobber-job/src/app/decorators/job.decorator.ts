@@ -1,5 +1,5 @@
 import { applyDecorators, Injectable, SetMetadata } from '@nestjs/common';
-import { JobMetadata } from '../interfaces/job-metadata.interface';
+import { JobMetadata } from '../interfaces';
 
 export const JOB_METADATA_KEY = 'job_meta';
 
