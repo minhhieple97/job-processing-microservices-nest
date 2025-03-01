@@ -16,7 +16,7 @@
           "args": ["node-env=development"]
         }
       },
-      "dependsOn": ["generate-prisma", "migrate-prisma"]
+      "dependsOn": ["generate-prisma"]
     },
     "ci-build": {
       "executor": "nx:run-commands",
