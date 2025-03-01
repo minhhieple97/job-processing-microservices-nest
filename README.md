@@ -2,81 +2,194 @@
 
 <a alt="Nx logo" href="https://nx.dev" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/nrwl/nx/master/images/nx-logo.png" width="45"></a>
 
-✨ Your new, shiny [Nx workspace](https://nx.dev) is almost ready ✨.
+A distributed job processing system built with modern microservices architecture.
 
-[Learn more about this workspace setup and its capabilities](https://nx.dev/nx-api/nest?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects) or run `npx nx graph` to visually explore what was created. Now, let's get you up to speed!
+> Please note that this project focuses on applying best practices, clean code and writing units in detail, CI/CD.
 
-## Finish your CI setup
+## System Architecture
 
-[Click here to finish setting up your workspace!](https://cloud.nx.app/connect/mx4G5YYLrU)
+Jobber is a robust, scalable job processing platform built using a microservices architecture. The system consists of several specialized services that communicate through gRPC and GraphQL, orchestrated in a Kubernetes environment.
 
-
-## Run tasks
-
-To run the dev server for your app, use:
-
-```sh
-npx nx serve jobber-auth
+```
+                                     ┌─────────────┐
+                                     │             │
+                                     │  PostgreSQL │
+                                     │             │
+                                     └──────┬──────┘
+                                            │
+                                            │
+                                     ┌──────▼──────┐
+                                     │             │
+                                     │    Auth     │
+                                     │             │
+                                     └──────┬──────┘
+                                            ▲
+                                            │
+                                            │ gRPC
+┌─────────┐     ┌─────────────┐  GraphQL   │   ┌─────────────┐      ┌─────────────┐
+│         │     │             ├────────────┘   │             │ gRPC │             │
+│  Actor  ├────►│    Load     │                │  Executor   ├─────►│  Products   │
+│         │     │  Balancer   │                │             │      │             │
+└─────────┘     │             │                └──────┬──────┘      └─────────────┘
+                └──────┬──────┘                      ▲
+                       │                             │
+                       │                             │ Consume
+                       │ GraphQL                     │
+                       │                      ┌──────┴──────┐
+                       │                      │             │
+                       └─────────────────────►│    Jobs     │
+                                              │             │
+                                              └──────┬──────┘
+                                                     │
+                                                     │ Produce
+                                                     ▼
+                                              ┌─────────────┐
+                                              │             │
+                                              │   Pulsar    │
+                                              │             │
+                                              └─────────────┘
 ```
 
-To create a production bundle:
+### Core Components
+
+- **Load Balancer**: Entry point for client requests, distributing traffic across services.
+- **Auth Service**: Handles authentication and authorization for all system operations.
+- **Jobs Service**: Manages job definitions, scheduling, and lifecycle. Exposes GraphQL API for job management.
+- **Executor Service**: Processes jobs from the queue, with multiple instances for horizontal scaling.
+- **Products Service**: Manages product data and metadata related to jobs.
+- **Pulsar**: Message broker that enables asynchronous communication between services.
+- **PostgreSQL**: Persistent data storage for all services.
+
+### Communication Patterns
+
+- **GraphQL**: Used for client-facing APIs (Auth and Jobs services)
+- **gRPC**: Used for internal service-to-service communication
+- **Pub/Sub**: Jobs service produces messages to Pulsar, which are consumed by Executor service
+
+## Technology Stack
+
+- **Framework**: [NestJS](https://nestjs.com/) - A progressive Node.js framework for building efficient and scalable server-side applications
+- **Monorepo Management**: [Nx](https://nx.dev/) - Smart, fast and extensible build system with first-class monorepo support
+- **API Layer**:
+  - [GraphQL](https://graphql.org/) - A query language for APIs
+  - [gRPC](https://grpc.io/) - High-performance RPC framework
+- **Database**: [PostgreSQL](https://www.postgresql.org/) - Advanced open-source relational database
+- **Message Broker**: [Apache Pulsar](https://pulsar.apache.org/) - Distributed pub-sub messaging system
+- **Orchestration**: [Kubernetes](https://kubernetes.io/) - Container orchestration platform
+- **Containerization**: Docker
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v16+)
+- Docker and Docker Compose
+- Kubernetes cluster (for production deployment)
+- Apache Pulsar instance
+- PostgreSQL database
+
+### Local Development Setup
+
+1. Clone the repository:
+
+   ```sh
+   git clone https://github.com/yourusername/jobber.git
+   cd jobber
+   ```
+
+2. Install dependencies:
+
+   ```sh
+   npm install
+   ```
+
+3. Start the development environment:
+
+   ```sh
+   # Start PostgreSQL and Pulsar using Docker Compose
+   docker-compose up -d
+
+   # Start all services in development mode
+   npx nx run-many --target=serve --all
+   ```
+
+### Running Individual Services
+
+To run a specific service:
+
+```sh
+npx nx serve jobber-auth    # Auth service
+npx nx serve jobber-jobs    # Jobs service
+npx nx serve jobber-executor # Executor service
+npx nx serve jobber-products # Products service
+```
+
+To build a service for production:
 
 ```sh
 npx nx build jobber-auth
 ```
 
-To see all available targets to run for a project, run:
+## Nx Usage Tips
+
+### Generating Components
+
+When using the `nx g` command (like `nx g <application, service, module>`), you need to specify the full path to the desired location:
 
 ```sh
-npx nx show project jobber-auth
+# Use the --directory flag (relative to where you run the command)
+nx g <schematic> --directory=apps/<service_name>
+
+# Or use a fully specified path
+nx g <schematic> apps/<service_name>/<module_name>
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+Alternatively, if you're using VS Code with the Nx extension:
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- Right-click on a folder and choose "Nx Generate"
+- The code generation will run from that folder
 
-## Add new projects
+This helps avoid having to manually move generated files to the correct location.
 
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
+## Project Structure
 
-Use the plugin's generator to create new projects.
+```
+jobber/
+├── apps/
+│   ├── jobber-auth/        # Authentication service
+│   ├── jobber-jobs/        # Job management service
+│   ├── jobber-executor/    # Job execution service
+│   └── jobber-products/    # Products service
+├── libs/
+│   ├── shared/             # Shared utilities and models
+│   ├── database/           # Database connections and models
+│   └── proto/              # Protocol buffer definitions for gRPC
+├── tools/                  # Build and deployment tools
+└── kubernetes/             # Kubernetes configuration files
+```
 
-To generate a new application, use:
+## Deployment
+
+The application is designed to be deployed on Kubernetes. Deployment configurations are available in the `kubernetes/` directory.
 
 ```sh
-npx nx g @nx/nest:app demo
+# Deploy to Kubernetes
+kubectl apply -f kubernetes/
 ```
 
-To generate a new library, use:
+## Contributing
 
-```sh
-npx nx g @nx/node:lib mylib
-```
-
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
-
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Install Nx Console
-
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
-
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
 ## Useful links
 
-Learn more:
+- [Learn more about Nx](https://nx.dev/nx-api/nest?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [GraphQL Documentation](https://graphql.org/learn/)
+- [gRPC Documentation](https://grpc.io/docs/)
+- [Apache Pulsar Documentation](https://pulsar.apache.org/docs/en/standalone/)
+- [Kubernetes Documentation](https://kubernetes.io/docs/home/)
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/nest?utm_source=nx_project&amp;utm_medium=readme&amp;utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+## License
 
-And join the Nx community:
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
