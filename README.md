@@ -82,7 +82,7 @@ Jobber is a robust, scalable job processing platform built using a microservices
 
 ### Prerequisites
 
-- Node.js (v16+)
+- Node.js (v20+)
 - Docker and Docker Compose
 - Kubernetes cluster (for production deployment)
 - Apache Pulsar instance
@@ -93,7 +93,8 @@ Jobber is a robust, scalable job processing platform built using a microservices
 1. Clone the repository:
 
    ```sh
-   git clone https://github.com/yourusername/jobber.git
+   git clone https://github.com/minhhieple97
+   /jobber.git
    cd jobber
    ```
 

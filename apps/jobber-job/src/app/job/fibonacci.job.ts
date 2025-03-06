@@ -5,4 +5,8 @@ import { AbstractJob } from './abstract.job';
   name: 'fibonacci',
   description: 'Generate Fibonacci sequence and store in database',
 })
-export class FibonacciJob extends AbstractJob {}
+export class FibonacciJob extends AbstractJob {
+  async execute() {
+    console.log('FibonacciJob executed');
+  }
+}
