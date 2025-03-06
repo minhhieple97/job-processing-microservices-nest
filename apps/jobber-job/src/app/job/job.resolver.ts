@@ -1,7 +1,6 @@
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JobService } from './job.service';
 import { JobMetadata } from './models/job-metadata.model';
-import { Job } from '../decorators/job.decorator';
 import { Args } from '@nestjs/graphql';
 import { ExecuteJobInput } from './dtos/excute-job.input';
 
@@ -12,8 +11,8 @@ export class JobResolver {
   async getJobs() {
     return this.jobService.getJobsMetadata();
   }
-  @Mutation(() => Job)
+  @Mutation(() => JobMetadata)
   async executeJob(@Args('input') input: ExecuteJobInput) {
-    return this.jobService.executeJob(input);
+    return this.jobService.executeJob(input.name);
   }
 }
