@@ -10,4 +10,5 @@ export const configValidationSchema = Joi.object({
   NODE_ENV: Joi.string()
     .valid('development', 'production', 'test')
     .default('development'),
+  GRPC_PORT: Joi.number(),
 });

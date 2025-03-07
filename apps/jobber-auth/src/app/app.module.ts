@@ -9,6 +9,7 @@ import { UserModule } from './user/user.module';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule } from './config/config.module';
 import { AuthModule } from './auth/auth.module';
+import { GrpcModule } from './grpc/grpc.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     UserModule,
     AuthModule,
+    GrpcModule,
   ],
   controllers: [AppController],
   providers: [

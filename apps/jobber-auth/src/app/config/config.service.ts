@@ -62,4 +62,8 @@ export class ConfigService {
       this.configService.get<string>('CLIENT_ORIGIN') || 'http://localhost:4200'
     );
   }
+
+  get grpcPort(): number {
+    return this.configService.get<number>('GRPC_PORT') || 5000;
+  }
 }
