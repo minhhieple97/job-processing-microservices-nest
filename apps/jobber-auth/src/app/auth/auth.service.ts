@@ -89,7 +89,7 @@ export class AuthService {
       return {
         accessToken: tokens.accessToken,
       };
-    } catch (error) {
+    } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
   }

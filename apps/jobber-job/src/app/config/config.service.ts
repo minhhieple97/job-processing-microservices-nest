@@ -48,4 +48,10 @@ export class ConfigService {
       this.configService.get<string>('CLIENT_ORIGIN') || 'http://localhost:4200'
     );
   }
+
+  get authServiceUrl(): string {
+    return (
+      this.configService.get<string>('AUTH_SERVICE_URL') || 'localhost:5000'
+    );
+  }
 }

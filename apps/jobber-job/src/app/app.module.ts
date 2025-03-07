@@ -6,10 +6,11 @@ import { APP_PIPE } from '@nestjs/core';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { JobModule } from './job/job.module';
+
 @Module({
   imports: [
-    JobModule,
     ConfigModule,
+    JobModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       useGlobalPrefix: false,
