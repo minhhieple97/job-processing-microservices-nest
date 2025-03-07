@@ -16,7 +16,7 @@
           "args": ["node-env=development"]
         }
       },
-      "dependsOn": ["generate-prisma"]
+      "dependsOn": ["generate-prisma", "proto"]
     },
     "ci-build": {
       "executor": "nx:run-commands",
@@ -68,6 +68,9 @@
       "options": {
         "cwd": "{projectRoot}"
       }
+    },
+    "proto": {
+      "command": "nx proto"
     }
   }
 }
