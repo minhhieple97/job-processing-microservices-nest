@@ -8,7 +8,6 @@ import {
   ExecutionContext,
   Inject,
   Injectable,
-  Logger,
   OnModuleInit,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -18,8 +17,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
-export class GqlAuthGuard implements CanActivate, OnModuleInit {
-  private readonly logger = new Logger(GqlAuthGuard.name);
+export class GrpcAuthGuard implements CanActivate, OnModuleInit {
   private authService: AuthServiceClient;
 
   constructor(@Inject(AUTH_PACKAGE_NAME) private client: ClientGrpc) {}
@@ -47,7 +45,6 @@ export class GqlAuthGuard implements CanActivate, OnModuleInit {
           })
         )
       );
-
       req.user = user;
       return true;
     } catch {
@@ -60,7 +57,6 @@ export class GqlAuthGuard implements CanActivate, OnModuleInit {
     if (req.cookies) {
       return req.cookies.access_token;
     }
-
     const authHeader = req.headers.authorization;
     if (
       authHeader &&
@@ -69,7 +65,6 @@ export class GqlAuthGuard implements CanActivate, OnModuleInit {
     ) {
       return authHeader.substring(7);
     }
-
     return null;
   }
 }

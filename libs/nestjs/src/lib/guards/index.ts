@@ -1,1 +1,1 @@
-export * from './gql-auth.guard';
+export * from './grpc-auth.guard';

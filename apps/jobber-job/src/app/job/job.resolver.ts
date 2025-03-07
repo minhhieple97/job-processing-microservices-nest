@@ -1,4 +1,4 @@
-import { GqlAuthGuard } from '@jobber/nestjs';
+import { GrpcAuthGuard } from '@jobber/nestjs';
 import { Mutation, Query, Resolver } from '@nestjs/graphql';
 import { JobService } from './job.service';
 import { JobMetadata } from './models/job-metadata.model';
@@ -12,8 +12,9 @@ export class JobResolver {
   constructor(private readonly jobService: JobService) {}
 
   @Query(() => [JobMetadata])
-  @UseGuards(GqlAuthGuard)
+  @UseGuards(GrpcAuthGuard)
   async getJobs() {
+    console.log('OK');
     return this.jobService.getJobsMetadata();
   }
 

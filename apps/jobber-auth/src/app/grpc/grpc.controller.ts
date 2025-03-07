@@ -29,7 +29,7 @@ export class GrpcController implements AuthServiceController {
         id: user.id,
         email: user.email,
       };
-    } catch (error) {
+    } catch {
       throw new Error('Invalid token');
     }
   }
